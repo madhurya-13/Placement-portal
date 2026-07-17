@@ -1,13 +1,8 @@
-# app/main.py
-"""
-FastAPI application entrypoint.
-Run with: uvicorn app.main:app --reload
-"""
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.v1 import health
+import app.models  # noqa: F401 — ensures all models are registered before anything else runs
+from app.api.v1 import health, auth
 
 app = FastAPI(
     title="Campus Placement Portal API",
@@ -15,7 +10,6 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# Allow the React frontend (running on a different port/origin) to call this API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.FRONTEND_ORIGIN],
@@ -24,11 +18,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register routers — every new feature adds one line here, not scattered logic
 app.include_router(health.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")  # ADDED
 
 
 @app.get("/")
 def root():
-    """Root endpoint — just confirms the API is reachable."""
     return {"message": "Campus Placement Portal API is running"}

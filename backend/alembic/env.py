@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from app.core.config import settings
 from app.db.base import Base  # imports all models via base.py's import block
-
+import app.models 
 config = context.config
 
 # Inject our real DATABASE_URL from settings, overriding alembic.ini
