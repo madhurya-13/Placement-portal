@@ -1,0 +1,26 @@
+# docker-compose.yml
+# Purpose: Spin up a local PostgreSQL instance for development,
+# so you don't depend on Neon connectivity while coding offline.
+# Production still uses Neon — this is a DEV-ONLY convenience.
+
+
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: placement_portal_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: placement_admin
+      POSTGRES_PASSWORD: placement_pass
+      POSTGRES_DB: placement_portal_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+# Backend and frontend services will be added here in a later milestone,
+# once their Dockerfiles exist.
