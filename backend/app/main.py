@@ -1,8 +1,9 @@
+# app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-import app.models  # noqa: F401 — ensures all models are registered before anything else runs
-from app.api.v1 import health, auth
+import app.models  # noqa: F401
+from app.api.v1 import health, auth, students, jobs, applications
 
 app = FastAPI(
     title="Campus Placement Portal API",
@@ -19,7 +20,10 @@ app.add_middleware(
 )
 
 app.include_router(health.router, prefix="/api/v1")
-app.include_router(auth.router, prefix="/api/v1")  # ADDED
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(students.router, prefix="/api/v1")
+app.include_router(jobs.router, prefix="/api/v1")
+app.include_router(applications.router, prefix="/api/v1")
 
 
 @app.get("/")
