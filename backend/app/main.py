@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 import app.models  # noqa: F401
-from app.api.v1 import health, auth, students, jobs, applications
+from app.api.v1 import health, auth, students, jobs, applications, companies
 
 app = FastAPI(
     title="Campus Placement Portal API",
@@ -24,6 +24,7 @@ app.include_router(auth.router, prefix="/api/v1")
 app.include_router(students.router, prefix="/api/v1")
 app.include_router(jobs.router, prefix="/api/v1")
 app.include_router(applications.router, prefix="/api/v1")
+app.include_router(companies.router, prefix="/api/v1")
 
 
 @app.get("/")
