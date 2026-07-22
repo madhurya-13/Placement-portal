@@ -6,6 +6,7 @@ import * as authApi from "../api/auth";
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"student" | "recruiter">("student");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -13,7 +14,7 @@ export default function Register() {
     e.preventDefault();
     setError("");
     try {
-      await authApi.register(email, password, "student");
+      await authApi.register(email, password, role);
       navigate("/login");
     } catch {
       setError("Registration failed. Email may already be in use.");
@@ -25,6 +26,17 @@ export default function Register() {
       <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">Register</h1>
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+
+        <label className="block text-sm text-gray-600 mb-1">I am a:</label>
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value as "student" | "recruiter")}
+          className="w-full border rounded px-3 py-2 mb-4"
+        >
+          <option value="student">Student</option>
+          <option value="recruiter">Recruiter</option>
+        </select>
+
         <input
           type="email"
           placeholder="Email"
@@ -42,7 +54,7 @@ export default function Register() {
           required
         />
         <button type="submit" className="w-full bg-blue-600 text-white rounded py-2 font-semibold">
-          Register as Student
+          Register as {role === "student" ? "Student" : "Recruiter"}
         </button>
       </form>
     </div>

@@ -14,8 +14,12 @@ export default function Login() {
     e.preventDefault();
     setError("");
     try {
-      await loginUser(email, password);
-      navigate("/dashboard");
+      const loggedInUser = await loginUser(email, password);
+      if (loggedInUser.role === "recruiter") {
+        navigate("/recruiter-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch {
       setError("Invalid email or password.");
     }

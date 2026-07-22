@@ -38,14 +38,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  async function loginUser(email: string, password: string) {
-    const res = await authApi.login(email, password);
-    localStorage.setItem("access_token", res.data.access_token);
-    localStorage.setItem("refresh_token", res.data.refresh_token);
-    const me = await authApi.getMe();
-    setUser(me.data);
-  }
-
+  
+async function loginUser(email: string, password: string) {
+  const res = await authApi.login(email, password);
+  localStorage.setItem("access_token", res.data.access_token);
+  localStorage.setItem("refresh_token", res.data.refresh_token);
+  const me = await authApi.getMe();
+  setUser(me.data);
+  return me.data;  // ADDED
+}
   function logoutUser() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
