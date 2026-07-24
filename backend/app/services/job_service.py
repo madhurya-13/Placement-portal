@@ -1,6 +1,6 @@
 # app/services/job_service.py
 """Job listing and management logic."""
-
+from app.models.job import Job, JobApprovalStatus
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session, joinedload
 from fastapi import HTTPException, status
@@ -12,11 +12,14 @@ from app.schemas.job import JobCreate, JobUpdate
 
 
 def list_open_jobs(db: Session) -> list[Job]:
-    """Student-facing: only non-expired jobs, newest first."""
+    """Students only ever see jobs that are both non-expired AND approved."""
     return (
         db.query(Job)
         .options(joinedload(Job.company))
-        .filter(Job.deadline >= datetime.now(timezone.utc))
+        .filter(
+            Job.deadline >= datetime.now(timezone.utc),
+            Job.approval_status == JobApprovalStatus.APPROVED,
+        )
         .order_by(Job.created_at.desc())
         .all()
     )

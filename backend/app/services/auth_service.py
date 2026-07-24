@@ -29,10 +29,16 @@ def register_user(db: Session, payload: UserRegister) -> User:
             detail="An account with this email already exists.",
         )
 
+    # Recruiters need Placement Officer approval before their account is
+    # fully active; students and officers are approved automatically.
+    from app.models.user import UserRole
+    is_approved = payload.role != UserRole.RECRUITER
+
     user = User(
         email=payload.email,
         hashed_password=hash_password(payload.password),
         role=payload.role,
+        is_approved=is_approved,
     )
     db.add(user)
     db.commit()
@@ -43,16 +49,16 @@ def register_user(db: Session, payload: UserRegister) -> User:
 def authenticate_user(db: Session, email: str, password: str) -> User:
     user = db.query(User).filter(User.email == email).first()
     if not user or not verify_password(password, user.hashed_password):
-        # Deliberately vague error — never reveal whether the email
-        # exists or the password was wrong. Prevents user-enumeration attacks.
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password.",
         )
     if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This account has been deactivated.")
+    if not user.is_approved:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="This account has been deactivated.",
+            detail="Your recruiter account is pending Placement Officer approval.",
         )
     return user
 

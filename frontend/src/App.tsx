@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import StudentDashboard from "./pages/StudentDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
+import OfficerDashboard from "./pages/OfficerDashboard";
 
 function App() {
   return (
@@ -27,6 +28,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["recruiter"]}>
                 <RecruiterDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/officer-dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["placement_officer"]}>
+                <OfficerDashboard />
               </ProtectedRoute>
             }
           />

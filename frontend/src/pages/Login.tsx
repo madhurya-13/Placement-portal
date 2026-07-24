@@ -17,6 +17,8 @@ export default function Login() {
       const loggedInUser = await loginUser(email, password);
       if (loggedInUser.role === "recruiter") {
         navigate("/recruiter-dashboard");
+      } else if (loggedInUser.role === "placement_officer") {
+        navigate("/officer-dashboard");
       } else {
         navigate("/dashboard");
       }
