@@ -1,6 +1,9 @@
 // src/components/ResumeUpload.tsx
 import { useState } from "react";
 import * as studentApi from "../api/student";
+import Card from "./ui/Card";
+import Button from "./ui/Button";
+import PageHeader from "./ui/PageHeader";
 
 export default function ResumeUpload() {
   const [file, setFile] = useState<File | null>(null);
@@ -18,13 +21,20 @@ export default function ResumeUpload() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Upload Resume</h2>
-      <input type="file" accept=".pdf,.doc,.docx" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-      <button onClick={handleUpload} className="ml-4 bg-blue-600 text-white rounded px-4 py-2">
-        Upload
-      </button>
-      {status && <p className="mt-3 text-sm text-gray-600">{status}</p>}
-    </div>
+    <Card>
+      <PageHeader title="Upload Resume" />
+      <div className="flex items-center gap-3">
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          className="text-xs text-ink-200 file:mr-3 file:py-2 file:px-3.5 file:rounded-xl file:border-0 file:bg-white/10 file:text-ink-50 file:text-xs"
+        />
+        <Button onClick={handleUpload} size="sm">
+          Upload
+        </Button>
+      </div>
+      {status && <p className="mt-3 text-xs text-ink-400">{status}</p>}
+    </Card>
   );
 }

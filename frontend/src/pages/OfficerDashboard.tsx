@@ -1,27 +1,28 @@
 // src/pages/OfficerDashboard.tsx
-import { useAuth } from "../context/useAuth";
+import { LayoutDashboard, Users, Briefcase } from "lucide-react";
+import DashboardLayout from "../components/layout/DashboardLayout";
 import StatsPanel from "../components/StatsPanel";
 import PendingRecruitersPanel from "../components/PendingRecruitersPanel";
 import PendingJobsPanel from "../components/PendingJobsPanel";
 
-export default function OfficerDashboard() {
-  const { user, logoutUser } = useAuth();
+const navLinks = [
+  { to: "/officer-dashboard#overview", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/officer-dashboard#recruiters", label: "Recruiters", icon: Users },
+  { to: "/officer-dashboard#jobs", label: "Jobs", icon: Briefcase },
+];
 
+export default function OfficerDashboard() {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Placement Officer: {user?.email}</h1>
-          <button onClick={logoutUser} className="text-sm text-red-600 underline">
-            Logout
-          </button>
-        </div>
-        <div className="grid gap-6">
-          <StatsPanel />
+    <DashboardLayout navLinks={navLinks} pageTitle="Placement Officer Dashboard">
+      <div id="overview" className="space-y-5">
+        <StatsPanel />
+        <div id="recruiters">
           <PendingRecruitersPanel />
+        </div>
+        <div id="jobs">
           <PendingJobsPanel />
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

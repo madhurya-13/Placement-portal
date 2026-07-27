@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import * as companyApi from "../api/company";
 import * as jobsApi from "../api/jobs";
 import type { Company } from "../types";
+import Card from "./ui/Card";
+import Button from "./ui/Button";
+import PageHeader from "./ui/PageHeader";
 
 export default function PostJobForm({ onJobPosted }: { onJobPosted: () => void }) {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -43,27 +46,30 @@ export default function PostJobForm({ onJobPosted }: { onJobPosted: () => void }
     }
   }
 
+  const inputClass =
+    "bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-ink-50 placeholder:text-ink-400 focus:outline-none focus:border-white/40 transition-colors";
+
   if (companies.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-bold mb-2 text-gray-800">Post a Job</h2>
-        <p className="text-sm text-gray-500">Create a company first before posting jobs.</p>
-      </div>
+      <Card>
+        <PageHeader title="Post a Job" />
+        <p className="text-sm text-ink-400">Create a company first before posting jobs.</p>
+      </Card>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Post a Job</h2>
-      {message && <p className="text-sm mb-3 text-blue-600">{message}</p>}
+    <Card>
+      <PageHeader title="Post a Job" />
+      {message && <p className="text-xs mb-3 text-accent-blue">{message}</p>}
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3">
         <select
           value={form.company_id}
           onChange={(e) => setForm({ ...form, company_id: Number(e.target.value) })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
         >
           {companies.map((c) => (
-            <option key={c.id} value={c.id}>
+            <option key={c.id} value={c.id} className="bg-ink-900">
               {c.name}
             </option>
           ))}
@@ -72,14 +78,14 @@ export default function PostJobForm({ onJobPosted }: { onJobPosted: () => void }
           placeholder="Job Title"
           value={form.title}
           onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
           required
         />
         <textarea
           placeholder="Description"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
           required
         />
         <input
@@ -87,25 +93,25 @@ export default function PostJobForm({ onJobPosted }: { onJobPosted: () => void }
           placeholder="CTC (optional)"
           value={form.ctc}
           onChange={(e) => setForm({ ...form, ctc: e.target.value })}
-          className="border rounded px-3 py-2"
+          className={inputClass}
         />
         <input
           type="date"
           value={form.deadline}
           onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-          className="border rounded px-3 py-2"
+          className={inputClass}
           required
         />
         <input
           placeholder="Eligibility criteria (optional)"
           value={form.eligibility_criteria}
           onChange={(e) => setForm({ ...form, eligibility_criteria: e.target.value })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
         />
-        <button type="submit" className="col-span-2 bg-green-600 text-white rounded py-2 font-semibold">
+        <Button type="submit" variant="success" className="col-span-2">
           Post Job
-        </button>
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 }

@@ -2,6 +2,10 @@
 import { useState, useEffect } from "react";
 import * as companyApi from "../api/company";
 import type { Company } from "../types";
+import Card from "./ui/Card";
+import Button from "./ui/Button";
+import Badge from "./ui/Badge";
+import PageHeader from "./ui/PageHeader";
 
 export default function CreateCompanyForm({ onCompanyCreated }: { onCompanyCreated: () => void }) {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -30,44 +34,47 @@ export default function CreateCompanyForm({ onCompanyCreated }: { onCompanyCreat
     }
   }
 
-  return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Your Companies</h2>
-      {message && <p className="text-sm mb-3 text-blue-600">{message}</p>}
+  const inputClass =
+    "bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-ink-50 placeholder:text-ink-400 focus:outline-none focus:border-white/40 transition-colors";
 
-      <ul className="mb-4 space-y-1">
+  return (
+    <Card>
+      <PageHeader title="Your Companies" subtitle="Manage your registered companies" />
+      {message && <p className="text-xs mb-3 text-accent-blue">{message}</p>}
+
+      <div className="flex flex-wrap gap-2 mb-4">
         {companies.map((c) => (
-          <li key={c.id} className="text-sm text-gray-700">
-            • {c.name}
-          </li>
+          <Badge key={c.id} variant="slate">
+            {c.name}
+          </Badge>
         ))}
-        {companies.length === 0 && <li className="text-sm text-gray-500">No companies yet.</li>}
-      </ul>
+        {companies.length === 0 && <p className="text-xs text-ink-400">No companies yet.</p>}
+      </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3">
         <input
           placeholder="Company Name"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
           required
         />
         <input
           placeholder="Website (optional)"
           value={form.website}
           onChange={(e) => setForm({ ...form, website: e.target.value })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
         />
         <textarea
           placeholder="Description (optional)"
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
         />
-        <button type="submit" className="col-span-2 bg-blue-600 text-white rounded py-2 font-semibold">
+        <Button type="submit" className="col-span-2">
           Create Company
-        </button>
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 }

@@ -1,29 +1,33 @@
 // src/pages/StudentDashboard.tsx
-import { useAuth } from "../context/useAuth";
+import { LayoutDashboard, Briefcase, Send, User } from "lucide-react";
+import DashboardLayout from "../components/layout/DashboardLayout";
 import ProfileForm from "../components/ProfileForm";
 import ResumeUpload from "../components/ResumeUpload";
 import JobsList from "../components/JobsList";
 import ApplicationStatusList from "../components/ApplicationStatusList";
 
-export default function StudentDashboard() {
-  const { user, logoutUser } = useAuth();
+const navLinks = [
+  { to: "/dashboard#overview", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/dashboard#jobs", label: "Jobs", icon: Briefcase },
+  { to: "/dashboard#applications", label: "Applications", icon: Send },
+  { to: "/dashboard#profile", label: "Profile", icon: User },
+];
 
+export default function StudentDashboard() {
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Welcome, {user?.email}</h1>
-          <button onClick={logoutUser} className="text-sm text-red-600 underline">
-            Logout
-          </button>
-        </div>
-        <div className="grid gap-6">
+    <DashboardLayout navLinks={navLinks} pageTitle="Student Dashboard">
+      <div id="overview" className="space-y-5">
+        <div id="profile">
           <ProfileForm />
-          <ResumeUpload />
+        </div>
+        <ResumeUpload />
+        <div id="jobs">
           <JobsList />
+        </div>
+        <div id="applications">
           <ApplicationStatusList />
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

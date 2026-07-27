@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import * as jobsApi from "../api/jobs";
 import type { Job } from "../types";
+import Card from "./ui/Card";
+import Button from "./ui/Button";
+import PageHeader from "./ui/PageHeader";
 import ApplicantsPanel from "./ApplicantsPanel";
 
 export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
@@ -26,11 +29,7 @@ export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
 
   function startEdit(job: Job) {
     setEditingJobId(job.id);
-    setEditForm({
-      title: job.title,
-      ctc: job.ctc?.toString() || "",
-      deadline: job.deadline.split("T")[0], // convert ISO datetime to yyyy-mm-dd for the input
-    });
+    setEditForm({ title: job.title, ctc: job.ctc?.toString() || "", deadline: job.deadline.split("T")[0] });
   }
 
   async function saveEdit(jobId: number) {
@@ -43,74 +42,81 @@ export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
     loadJobs();
   }
 
+  const inputClass =
+    "bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-ink-50 w-full focus:outline-none focus:border-white/40";
+
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">My Posted Jobs</h2>
-      {jobs.length === 0 && <p className="text-gray-500">You haven't posted any jobs yet.</p>}
+    <Card>
+      <PageHeader title="My Posted Jobs" />
+      {jobs.length === 0 && <p className="text-ink-400 text-sm">You haven't posted any jobs yet.</p>}
       <div className="space-y-3">
         {jobs.map((job) => (
-          <div key={job.id} className="border rounded p-4">
+          <div key={job.id} className="bg-white/5 border border-white/10 rounded-2xl p-4">
             {editingJobId === job.id ? (
               <div className="space-y-2">
                 <input
                   value={editForm.title}
                   onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                  className="border rounded px-2 py-1 w-full"
+                  className={inputClass}
                 />
                 <input
                   type="number"
                   value={editForm.ctc}
                   onChange={(e) => setEditForm({ ...editForm, ctc: e.target.value })}
-                  className="border rounded px-2 py-1 w-full"
+                  className={inputClass}
                   placeholder="CTC"
                 />
                 <input
                   type="date"
                   value={editForm.deadline}
                   onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })}
-                  className="border rounded px-2 py-1 w-full"
+                  className={inputClass}
                 />
                 <div className="flex gap-2">
-                  <button onClick={() => saveEdit(job.id)} className="bg-blue-600 text-white rounded px-3 py-1 text-sm">
+                  <Button size="sm" onClick={() => saveEdit(job.id)}>
                     Save
-                  </button>
-                  <button onClick={() => setEditingJobId(null)} className="bg-gray-300 rounded px-3 py-1 text-sm">
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setEditingJobId(null)}>
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
               <>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-lg">{job.title}</h3>
-                    <p className="text-sm text-gray-600">{job.company.name}</p>
-                    {job.ctc && <p className="text-sm">CTC: {job.ctc}</p>}
-                    <p className="text-xs text-gray-400">
+                    <h3 className="font-semibold text-sm text-ink-50">{job.title}</h3>
+                    <p className="text-xs text-ink-400">
+                      {job.company.name}
+                      {job.ctc ? ` · CTC ${job.ctc}` : ""}
+                    </p>
+                    <p className="text-[11px] text-ink-400 mt-1">
                       Deadline: {new Date(job.deadline).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => startEdit(job)} className="text-sm text-blue-600 underline">
+                  <div className="flex gap-3 text-xs">
+                    <button onClick={() => startEdit(job)} className="text-accent-blue">
                       Edit
                     </button>
-                    <button onClick={() => handleDelete(job.id)} className="text-sm text-red-600 underline">
+                    <button onClick={() => handleDelete(job.id)} className="text-accent-red">
                       Delete
                     </button>
                   </div>
                 </div>
-                <button
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="mt-3 bg-white/5"
                   onClick={() => setExpandedJobId(expandedJobId === job.id ? null : job.id)}
-                  className="mt-3 text-sm bg-gray-100 rounded px-3 py-1"
                 >
                   {expandedJobId === job.id ? "Hide Applicants" : "View Applicants"}
-                </button>
+                </Button>
                 {expandedJobId === job.id && <ApplicantsPanel jobId={job.id} />}
               </>
             )}
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
