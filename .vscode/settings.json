@@ -3,5 +3,6 @@
   "python.analysis.extraPaths": ["${workspaceFolder}/backend"],
   "python.analysis.diagnosticSeverityOverrides": {
     "reportUndefinedVariable": "none"
-  }
+  },
+  "css.lint.unknownAtRules": "ignore"
 }

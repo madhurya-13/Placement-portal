@@ -1,29 +1,33 @@
 // src/pages/RecruiterDashboard.tsx
 import { useState } from "react";
-import { useAuth } from "../context/useAuth";
+import { LayoutDashboard, Building2, Briefcase } from "lucide-react";
+import DashboardLayout from "../components/layout/DashboardLayout";
 import CreateCompanyForm from "../components/CreateCompanyForm";
 import PostJobForm from "../components/PostJobForm";
 import MyJobsList from "../components/MyJobsList";
 
+const navLinks = [
+  { to: "/recruiter-dashboard#overview", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/recruiter-dashboard#companies", label: "Companies", icon: Building2 },
+  { to: "/recruiter-dashboard#jobs", label: "Jobs", icon: Briefcase },
+];
+
 export default function RecruiterDashboard() {
-  const { user, logoutUser } = useAuth();
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Recruiter: {user?.email}</h1>
-          <button onClick={logoutUser} className="text-sm text-red-600 underline">
-            Logout
-          </button>
-        </div>
-        <div className="grid gap-6">
+    <DashboardLayout navLinks={navLinks} pageTitle="Recruiter Dashboard">
+      <div id="overview" className="space-y-5">
+        <div id="companies">
           <CreateCompanyForm onCompanyCreated={() => setRefreshKey((k) => k + 1)} />
+        </div>
+        <div id="jobs">
           <PostJobForm key={refreshKey} onJobPosted={() => setRefreshKey((k) => k + 1)} />
-          <MyJobsList refreshKey={refreshKey} />
+          <div className="mt-5">
+            <MyJobsList refreshKey={refreshKey} />
+          </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

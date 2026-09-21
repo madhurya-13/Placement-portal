@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import * as studentApi from "../api/student";
 import type { StudentProfile } from "../types";
+import Card from "./ui/Card";
+import Button from "./ui/Button";
+import PageHeader from "./ui/PageHeader";
 
 export default function ProfileForm() {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
@@ -28,31 +31,32 @@ export default function ProfileForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const res = exists
-      ? await studentApi.updateMyProfile(form)
-      : await studentApi.createMyProfile(form);
+    const res = exists ? await studentApi.updateMyProfile(form) : await studentApi.createMyProfile(form);
     setProfile(res.data);
     setExists(true);
     setMessage("Profile saved successfully.");
   }
 
+  const inputClass =
+    "bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-ink-50 placeholder:text-ink-400 focus:outline-none focus:border-white/40 transition-colors";
+
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Profile</h2>
-      {message && <p className="text-green-600 text-sm mb-3">{message}</p>}
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+    <Card>
+      <PageHeader title="Profile" subtitle="Manage your profile information" />
+      {message && <p className="text-accent-green text-xs mb-3">{message}</p>}
+      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3">
         <input
           placeholder="Full Name"
           value={form.full_name}
           onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-          className="border rounded px-3 py-2 col-span-2"
+          className={`${inputClass} col-span-2`}
           required
         />
         <input
           placeholder="Branch"
           value={form.branch}
           onChange={(e) => setForm({ ...form, branch: e.target.value })}
-          className="border rounded px-3 py-2"
+          className={inputClass}
           required
         />
         <input
@@ -60,7 +64,7 @@ export default function ProfileForm() {
           placeholder="Batch Year"
           value={form.batch_year}
           onChange={(e) => setForm({ ...form, batch_year: Number(e.target.value) })}
-          className="border rounded px-3 py-2"
+          className={inputClass}
           required
         />
         <input
@@ -69,24 +73,27 @@ export default function ProfileForm() {
           placeholder="CGPA"
           value={form.cgpa}
           onChange={(e) => setForm({ ...form, cgpa: Number(e.target.value) })}
-          className="border rounded px-3 py-2"
+          className={inputClass}
           required
         />
         <input
           placeholder="Phone"
           value={form.phone}
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
-          className="border rounded px-3 py-2"
+          className={inputClass}
         />
-        <button type="submit" className="col-span-2 bg-blue-600 text-white rounded py-2 font-semibold">
+        <Button type="submit" className="col-span-2">
           {exists ? "Update Profile" : "Create Profile"}
-        </button>
+        </Button>
       </form>
       {profile?.resume_url && (
-        <p className="mt-4 text-sm text-gray-600">
-          Resume: <a href={profile.resume_url} target="_blank" className="text-blue-600 underline">View uploaded resume</a>
+        <p className="mt-4 text-xs text-ink-400">
+          Resume:{" "}
+          <a href={profile.resume_url} target="_blank" rel="noreferrer" className="text-ink-200 underline">
+            View uploaded resume
+          </a>
         </p>
       )}
-    </div>
+    </Card>
   );
 }
