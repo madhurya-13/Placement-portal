@@ -19,3 +19,46 @@ body {
   background: linear-gradient(160deg, #4a4a4a 0%, #2e2e2e 100%);
   min-height: 100vh;
 }
+
+@keyframes auth-orb-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(18px, 12px, 0) scale(1.08);
+  }
+}
+
+@keyframes auth-card-beam {
+  0% {
+    transform: translateX(-120%);
+  }
+  45%, 100% {
+    transform: translateX(120%);
+  }
+}
+
+.auth-orb {
+  animation: auth-orb-drift 8s ease-in-out infinite;
+}
+
+.auth-orb-blue {
+  animation-delay: -3s;
+  animation-duration: 10s;
+}
+
+.auth-card-beam {
+  overflow: hidden;
+}
+
+.auth-card-beam::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  filter: blur(1px);
+  animation: auth-card-beam 4s ease-in-out infinite;
+}

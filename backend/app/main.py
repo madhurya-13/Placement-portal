@@ -5,6 +5,9 @@ from app.core.config import settings
 import app.models  # noqa: F401
 from app.api.v1 import health, auth, students, jobs, applications, companies, officer
 
+allowed_origins = {settings.FRONTEND_ORIGIN}
+allowed_origins.update({"http://localhost:5173", "http://localhost:5174", "http://localhost:5175"})
+
 app = FastAPI(
     title="Campus Placement Portal API",
     description="Backend API for managing campus placement drives.",
@@ -13,7 +16,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_ORIGIN],
+    allow_origins=list(allowed_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
