@@ -20,7 +20,7 @@ const sizes: Record<string, string> = { sm: "text-xs px-3 py-1.5", md: "text-sm 
 export default function Button({ children, variant = "primary", size = "md", className = "", ...props }: ButtonProps) {
   return (
     <button
-      className={`rounded-xl font-semibold transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`rounded-xl font-semibold transition-all duration-200 ease-out active:scale-95 active:duration-100 disabled:opacity-40 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
       {children}

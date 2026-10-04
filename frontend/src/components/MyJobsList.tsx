@@ -111,7 +111,11 @@ export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
                 >
                   {expandedJobId === job.id ? "Hide Applicants" : "View Applicants"}
                 </Button>
-                {expandedJobId === job.id && <ApplicantsPanel jobId={job.id} />}
+                {expandedJobId === job.id && (
+                  <div className="animate-materialize">
+                    <ApplicantsPanel jobId={job.id} />
+                  </div>
+                )}
               </>
             )}
           </div>
