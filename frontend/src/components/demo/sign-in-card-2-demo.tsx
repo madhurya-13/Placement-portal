@@ -1,0 +1,12 @@
+// src/components/demo/sign-in-card-2-demo.tsx
+import { Component } from "../ui/sign-in-card-2";
+
+const DemoOne = () => {
+  return (
+    <div className="flex w-full h-screen justify-center items-center">
+      <Component />
+    </div>
+  );
+};
+
+export { DemoOne };

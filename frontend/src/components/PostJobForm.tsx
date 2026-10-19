@@ -6,6 +6,7 @@ import type { Company } from "../types";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
 import PageHeader from "./ui/PageHeader";
+import { inputClass } from "./ui/inputClass";
 
 export default function PostJobForm({ onJobPosted }: { onJobPosted: () => void }) {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -46,8 +47,6 @@ export default function PostJobForm({ onJobPosted }: { onJobPosted: () => void }
     }
   }
 
-  const inputClass =
-    "bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-ink-50 placeholder:text-ink-400 focus:outline-none focus:border-white/40 transition-colors";
 
   if (companies.length === 0) {
     return (
@@ -61,7 +60,7 @@ export default function PostJobForm({ onJobPosted }: { onJobPosted: () => void }
   return (
     <Card>
       <PageHeader title="Post a Job" />
-      {message && <p className="text-xs mb-3 text-accent-blue">{message}</p>}
+      {message && <p className="text-xs mb-3 text-accent-cyan">{message}</p>}
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3">
         <select
           value={form.company_id}

@@ -1,62 +1,93 @@
 // src/pages/Register.tsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import * as authApi from "../api/auth";
+import Card from "../components/ui/Card";
+import Button from "../components/ui/Button";
+import PageHeader from "../components/ui/PageHeader";
+import { inputClass } from "../components/ui/inputClass";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"student" | "recruiter">("student");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setSubmitting(true);
     try {
       await authApi.register(email, password, role);
       navigate("/login");
     } catch {
       setError("Registration failed. Email may already be in use.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-gray-800">Register</h1>
-        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <Card>
+          <span className="font-bold text-[15px] text-ink-50">
+            Placement<span className="text-ink-200">Hub</span>
+          </span>
+          <PageHeader title="Register" subtitle="Create an account to get started" />
 
-        <label className="block text-sm text-gray-600 mb-1">I am a:</label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value as "student" | "recruiter")}
-          className="w-full border rounded px-3 py-2 mb-4"
-        >
-          <option value="student">Student</option>
-          <option value="recruiter">Recruiter</option>
-        </select>
+          {error && <p className="text-accent-red text-xs mb-3">{error}</p>}
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-4"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password (min 8 characters)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-4"
-          required
-        />
-        <button type="submit" className="w-full bg-blue-600 text-white rounded py-2 font-semibold">
-          Register as {role === "student" ? "Student" : "Recruiter"}
-        </button>
-      </form>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <label className="block">
+              <span className="block text-xs text-ink-400 mb-1.5">I am a:</span>
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value as "student" | "recruiter")}
+                className={`${inputClass} w-full`}
+              >
+                <option value="student" className="bg-ink-900 text-ink-50">
+                  Student
+                </option>
+                <option value="recruiter" className="bg-ink-900 text-ink-50">
+                  Recruiter
+                </option>
+              </select>
+            </label>
+
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`${inputClass} w-full`}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password (min 8 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`${inputClass} w-full`}
+              required
+            />
+            <Button type="submit" disabled={submitting} className="w-full">
+              {submitting
+                ? "Creating account..."
+                : `Register as ${role === "student" ? "Student" : "Recruiter"}`}
+            </Button>
+          </form>
+
+          <p className="text-sm text-ink-400 mt-4 text-center">
+            Already have an account?{" "}
+            <Link to="/login" className="text-ink-200 underline hover:text-ink-50 transition-colors">
+              Log in
+            </Link>
+          </p>
+        </Card>
+      </div>
     </div>
   );
 }

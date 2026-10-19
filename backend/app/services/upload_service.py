@@ -32,6 +32,22 @@ def upload_resume(file: UploadFile, student_id: int) -> str:
             detail=f"Only {', '.join(ALLOWED_EXTENSIONS)} files are allowed.",
         )
 
+    # Enforce the size cap before calling the external API — fail fast
+    # rather than paying for an upload Cloudinary would accept anyway.
+    file.file.seek(0, 2)
+    size_bytes = file.file.tell()
+    file.file.seek(0)
+    if size_bytes > MAX_FILE_SIZE_MB * 1024 * 1024:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Resume must be {MAX_FILE_SIZE_MB}MB or smaller.",
+        )
+    if size_bytes == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The uploaded file is empty.",
+        )
+
     result = cloudinary.uploader.upload(
         file.file,
         resource_type="raw",  # "raw" because resumes aren't images

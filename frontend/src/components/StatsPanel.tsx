@@ -1,19 +1,23 @@
 // src/components/StatsPanel.tsx
+// Placement Officer statistics — tiles plus the shared premium chart kit
+// (same donut/glass panels/bar gradient as the recruiter dashboard).
 import { useState, useEffect } from "react";
 import { Users, Building2, Briefcase, FileText, Clock, Send, TrendingUp } from "lucide-react";
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import * as officerApi from "../api/officer";
 import type { PlacementStats } from "../types";
 import Card from "./ui/Card";
 import StatTile from "./ui/StatTile";
 import PageHeader from "./ui/PageHeader";
-
-const STATUS_COLORS: Record<string, string> = {
-  applied: "#e8c07d",
-  shortlisted: "#8aa8d9",
-  rejected: "#d98a8a",
-  selected: "#8ec98a",
-};
+import {
+  STATUS_COLORS,
+  AXIS_TICK,
+  AXIS_LINE,
+  TOOLTIP_STYLE,
+  BAR_COLOR,
+  LEGEND_HEIGHT,
+} from "./ui/chartConstants";
+import { ChartPanel, DonutCenter, ChartEmpty, WrappedTick } from "./ui/ChartTheme";
 
 export default function StatsPanel() {
   const [stats, setStats] = useState<PlacementStats | null>(null);
@@ -45,34 +49,77 @@ export default function StatsPanel() {
         <StatTile label="Pending Jobs" value={stats.pending_jobs} icon={FileText} />
         <StatTile label="Placement Rate" value={`${stats.placement_rate_percent}%`} icon={TrendingUp} />
       </div>
+
       <div className="grid md:grid-cols-2 gap-5">
-        <div>
-          <h3 className="text-xs font-semibold text-ink-200 mb-2">Applications by Status</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
-              <Pie data={statusData} dataKey="value" nameKey="name" outerRadius={75} label>
-                {statusData.map((entry) => (
-                  <Cell key={entry.name} fill={STATUS_COLORS[entry.name] || "#999"} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ background: "#2e2e2e", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8 }} />
-              <Legend wrapperStyle={{ fontSize: 11, color: "#d5d5d5" }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div>
-          <h3 className="text-xs font-semibold text-ink-200 mb-2">Top Companies by Applications</h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={stats.top_companies_by_applications}>
-              <XAxis dataKey="company" tick={{ fontSize: 10, fill: "#b0b0b0" }} />
-              <YAxis allowDecimals={false} tick={{ fill: "#b0b0b0" }} />
-              <Tooltip cursor={{ fill: "rgba(255,255,255,0.05)" }}
-                contentStyle={{ background: "#2e2e2e", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 8 }}
-              />
-              <Bar dataKey="applications" fill="#e8e8e8" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <ChartPanel title="Applications by Status" meta={`${stats.total_applications} total`}>
+          {stats.total_applications === 0 ? (
+            <ChartEmpty />
+          ) : (
+            <div className="relative">
+              <ResponsiveContainer width="100%" height={230}>
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={44}
+                    outerRadius={72}
+                    paddingAngle={3}
+                    cornerRadius={4}
+                    label={({ value }) => `${value}`}
+                    labelLine={{ stroke: "rgba(255,255,255,0.3)", strokeWidth: 1 }}
+                    stroke="none"
+                  >
+                    {statusData.map((entry) => (
+                      <Cell key={entry.name} fill={STATUS_COLORS[entry.name] || "#999"} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={TOOLTIP_STYLE} />
+                  <Legend
+                    wrapperStyle={{ fontSize: 12, color: "#e8e8e8", height: LEGEND_HEIGHT }}
+                    iconType="circle"
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <DonutCenter value={stats.total_applications} caption="total" />
+            </div>
+          )}
+        </ChartPanel>
+
+        <ChartPanel title="Top Companies by Applications" meta="top 5">
+          {stats.top_companies_by_applications.length === 0 ? (
+            <ChartEmpty />
+          ) : (
+            <ResponsiveContainer width="100%" height={230}>
+              <BarChart
+                data={stats.top_companies_by_applications}
+                margin={{ top: 10, right: 8, left: -14, bottom: 0 }}
+              >
+                <CartesianGrid stroke="rgba(255,255,255,0.07)" vertical={false} />
+                <XAxis
+                  dataKey="company"
+                  tick={WrappedTick}
+                  axisLine={AXIS_LINE}
+                  tickLine={false}
+                  interval={0}
+                  height={44}
+                />
+                <YAxis allowDecimals={false} tick={AXIS_TICK} axisLine={false} tickLine={false} />
+                <Tooltip
+                  cursor={{ fill: "rgba(255,255,255,0.06)" }}
+                  contentStyle={TOOLTIP_STYLE}
+                />
+                <Bar
+                  dataKey="applications"
+                  fill={BAR_COLOR}
+                  radius={[8, 8, 0, 0]}
+                  maxBarSize={64}
+                  label={{ fill: "#fafafa", fontSize: 12, fontWeight: 700, position: "top" }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </ChartPanel>
       </div>
     </Card>
   );

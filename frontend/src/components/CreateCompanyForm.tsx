@@ -6,6 +6,7 @@ import Card from "./ui/Card";
 import Button from "./ui/Button";
 import Badge from "./ui/Badge";
 import PageHeader from "./ui/PageHeader";
+import { inputClass } from "./ui/inputClass";
 
 export default function CreateCompanyForm({ onCompanyCreated }: { onCompanyCreated: () => void }) {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -34,13 +35,11 @@ export default function CreateCompanyForm({ onCompanyCreated }: { onCompanyCreat
     }
   }
 
-  const inputClass =
-    "bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-ink-50 placeholder:text-ink-400 focus:outline-none focus:border-white/40 transition-colors";
 
   return (
     <Card>
       <PageHeader title="Your Companies" subtitle="Manage your registered companies" />
-      {message && <p className="text-xs mb-3 text-accent-blue">{message}</p>}
+      {message && <p className="text-xs mb-3 text-accent-cyan">{message}</p>}
 
       <div className="flex flex-wrap gap-2 mb-4">
         {companies.map((c) => (

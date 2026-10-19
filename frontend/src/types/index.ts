@@ -93,3 +93,22 @@ export interface PlacementStats {
   top_companies_by_applications: { company: string; applications: number }[];
   placement_rate_percent: number;
 }
+
+export interface RecruiterStats {
+  total_jobs: number;
+  approved_jobs: number;
+  pending_jobs: number;
+  total_applications: number;
+  distinct_applicants: number;
+  applications_by_status: Record<string, number>;
+  top_companies_by_applications: { company: string; applications: number }[];
+  placement_rate_percent: number;
+}
+
+/** One bell-icon notification (derived server-side, see backend service). */
+export interface NotificationItem {
+  id: string;
+  title: string;
+  body: string;
+  created_at: string;
+}

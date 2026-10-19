@@ -31,6 +31,20 @@ class JobUpdate(BaseModel):
     deadline: datetime | None = None
 
 
+class RecruiterStats(BaseModel):
+    """Placement statistics scoped to the jobs a single recruiter posted —
+    powers the graphs on the recruiter dashboard."""
+
+    total_jobs: int
+    approved_jobs: int
+    pending_jobs: int
+    total_applications: int
+    distinct_applicants: int
+    applications_by_status: dict[str, int]
+    top_companies_by_applications: list[dict]
+    placement_rate_percent: float
+
+
 class JobResponse(BaseModel):
     id: int
     title: str
