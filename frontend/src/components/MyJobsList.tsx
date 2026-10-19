@@ -5,6 +5,7 @@ import type { Job } from "../types";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
 import PageHeader from "./ui/PageHeader";
+import { inputClass } from "./ui/inputClass";
 import ApplicantsPanel from "./ApplicantsPanel";
 
 export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
@@ -42,8 +43,7 @@ export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
     loadJobs();
   }
 
-  const inputClass =
-    "bg-white/5 border border-white/15 rounded-xl px-3 py-2 text-sm text-ink-50 w-full focus:outline-none focus:border-white/40";
+  const fieldClass = `${inputClass} w-full`;
 
   return (
     <Card>
@@ -57,20 +57,20 @@ export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
                 <input
                   value={editForm.title}
                   onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                  className={inputClass}
+                  className={fieldClass}
                 />
                 <input
                   type="number"
                   value={editForm.ctc}
                   onChange={(e) => setEditForm({ ...editForm, ctc: e.target.value })}
-                  className={inputClass}
+                  className={fieldClass}
                   placeholder="CTC"
                 />
                 <input
                   type="date"
                   value={editForm.deadline}
                   onChange={(e) => setEditForm({ ...editForm, deadline: e.target.value })}
-                  className={inputClass}
+                  className={fieldClass}
                 />
                 <div className="flex gap-2">
                   <Button size="sm" onClick={() => saveEdit(job.id)}>
@@ -95,7 +95,7 @@ export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
                     </p>
                   </div>
                   <div className="flex gap-3 text-xs">
-                    <button onClick={() => startEdit(job)} className="text-accent-blue">
+                    <button onClick={() => startEdit(job)} className="text-accent-cyan">
                       Edit
                     </button>
                     <button onClick={() => handleDelete(job.id)} className="text-accent-red">
@@ -111,7 +111,11 @@ export default function MyJobsList({ refreshKey }: { refreshKey: number }) {
                 >
                   {expandedJobId === job.id ? "Hide Applicants" : "View Applicants"}
                 </Button>
-                {expandedJobId === job.id && <ApplicantsPanel jobId={job.id} />}
+                {expandedJobId === job.id && (
+                  <div className="animate-materialize">
+                    <ApplicantsPanel jobId={job.id} />
+                  </div>
+                )}
               </>
             )}
           </div>

@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 import app.models  # noqa: F401
-from app.api.v1 import health, auth, students, jobs, applications, companies, officer
+from app.api.v1 import health, auth, students, jobs, applications, companies, officer, notifications
 
 app = FastAPI(
     title="Campus Placement Portal API",
@@ -32,3 +32,4 @@ def root():
     return {"message": "Campus Placement Portal API is running"}
 
 app.include_router(officer.router, prefix="/api/v1")
+app.include_router(notifications.router, prefix="/api/v1")

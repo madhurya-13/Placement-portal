@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.schemas.job import JobCreate, JobUpdate, JobResponse
+from app.schemas.job import JobCreate, JobUpdate, JobResponse, RecruiterStats
 from app.services import job_service
 from app.core.dependencies import get_current_user, require_role
 from app.models.user import User, UserRole
@@ -26,6 +26,16 @@ def list_my_jobs(
 ):
     """Recruiter-only: every job they've posted, including expired ones."""
     return job_service.list_my_posted_jobs(db, current_user)
+
+
+# NOTE: declared before "/{job_id}" so "stats" is never parsed as a job id.
+@router.get("/stats", response_model=RecruiterStats)
+def my_stats(
+    current_user: User = Depends(require_role(UserRole.RECRUITER)),
+    db: Session = Depends(get_db),
+):
+    """Recruiter-only: placement statistics across the jobs they posted."""
+    return job_service.get_recruiter_stats(db, current_user)
 
 
 @router.get("/{job_id}", response_model=JobResponse)

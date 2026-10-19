@@ -8,18 +8,29 @@ import Card from "./ui/Card";
 import Button from "./ui/Button";
 import PageHeader from "./ui/PageHeader";
 
-export default function JobsList() {
+interface JobsListProps {
+  /** Refetch when this changes (e.g. after an application is submitted). */
+  refreshKey?: number;
+  /** Called after a successful apply — lets the parent refresh other sections. */
+  onApplied?: () => void;
+}
+
+export default function JobsList({ refreshKey = 0, onApplied }: JobsListProps) {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [message, setMessage] = useState<Record<number, string>>({});
+  const [appliedIds, setAppliedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     jobsApi.listJobs().then((res) => setJobs(res.data));
-  }, []);
+    applicationsApi.getMyApplications().then((res) => setAppliedIds(new Set(res.data.map((a) => a.job_id))));
+  }, [refreshKey]);
 
   async function handleApply(jobId: number) {
     try {
       await applicationsApi.applyToJob(jobId);
+      setAppliedIds((prev) => new Set(prev).add(jobId));
       setMessage((m) => ({ ...m, [jobId]: "Applied!" }));
+      onApplied?.();
     } catch (err) {
       const detail =
         err && typeof err === "object" && "response" in err
@@ -54,10 +65,15 @@ export default function JobsList() {
                     <Calendar className="w-3 h-3" /> {new Date(job.deadline).toLocaleDateString()}
                   </span>
                 </div>
-                <Button size="sm" className="mt-3" onClick={() => handleApply(job.id)}>
-                  Apply
+                <Button
+                  size="sm"
+                  className="mt-3"
+                  disabled={appliedIds.has(job.id) || message[job.id] === "Applied!"}
+                  onClick={() => handleApply(job.id)}
+                >
+                  {appliedIds.has(job.id) || message[job.id] === "Applied!" ? "Applied" : "Apply"}
                 </Button>
-                {message[job.id] && <p className="text-xs mt-2 text-accent-blue">{message[job.id]}</p>}
+                {message[job.id] && <p className="text-xs mt-2 text-accent-cyan">{message[job.id]}</p>}
               </div>
             </div>
           </div>

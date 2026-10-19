@@ -5,8 +5,9 @@ import type { StudentProfile } from "../types";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
 import PageHeader from "./ui/PageHeader";
+import { inputClass } from "./ui/inputClass";
 
-export default function ProfileForm() {
+export default function ProfileForm({ refreshKey = 0 }: { refreshKey?: number }) {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [form, setForm] = useState({ full_name: "", branch: "", batch_year: 2026, cgpa: 0, phone: "" });
   const [exists, setExists] = useState(false);
@@ -27,7 +28,7 @@ export default function ProfileForm() {
         setExists(true);
       })
       .catch(() => setExists(false));
-  }, []);
+  }, [refreshKey]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,9 +37,6 @@ export default function ProfileForm() {
     setExists(true);
     setMessage("Profile saved successfully.");
   }
-
-  const inputClass =
-    "bg-white/5 border border-white/15 rounded-xl px-3.5 py-2.5 text-sm text-ink-50 placeholder:text-ink-400 focus:outline-none focus:border-white/40 transition-colors";
 
   return (
     <Card>

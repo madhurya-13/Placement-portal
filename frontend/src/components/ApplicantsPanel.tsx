@@ -39,7 +39,7 @@ export default function ApplicantsPanel({ jobId }: { jobId: number }) {
               {a.student.branch} • {a.student.batch_year} • CGPA {a.student.cgpa}
             </p>
             {a.student.resume_url && (
-              <a href={a.student.resume_url} target="_blank" rel="noreferrer" className="text-[11px] text-accent-blue underline">
+              <a href={a.student.resume_url} target="_blank" rel="noreferrer" className="text-[11px] text-accent-cyan underline">
                 View Resume
               </a>
             )}
@@ -49,7 +49,7 @@ export default function ApplicantsPanel({ jobId }: { jobId: number }) {
             <select
               value={a.status}
               onChange={(e) => handleStatusChange(a.id, e.target.value as ApplicationStatus)}
-              className="text-xs bg-white/5 border border-white/15 rounded-lg px-2 py-1 text-ink-50"
+              className="text-xs bg-white/5 border border-white/15 rounded-xl px-2 py-1 text-ink-50"
             >
               <option value="applied" className="bg-ink-900">Applied</option>
               <option value="shortlisted" className="bg-ink-900">Shortlisted</option>

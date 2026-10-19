@@ -13,12 +13,12 @@ const statusVariant: Record<string, "amber" | "blue" | "red" | "green"> = {
   selected: "green",
 };
 
-export default function ApplicationStatusList() {
+export default function ApplicationStatusList({ refreshKey = 0 }: { refreshKey?: number }) {
   const [applications, setApplications] = useState<Application[]>([]);
 
   useEffect(() => {
     applicationsApi.getMyApplications().then((res) => setApplications(res.data));
-  }, []);
+  }, [refreshKey]);
 
   return (
     <Card>
