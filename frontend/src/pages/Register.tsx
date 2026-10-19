@@ -1,6 +1,7 @@
 // src/pages/Register.tsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 import * as authApi from "../api/auth";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
@@ -22,8 +23,16 @@ export default function Register() {
     try {
       await authApi.register(email, password, role);
       navigate("/login");
-    } catch {
-      setError("Registration failed. Email may already be in use.");
+    } catch (err) {
+      // Surface the API's own detail message when there is one
+      // (e.g. "An account with this email already exists.").
+      if (axios.isAxiosError(err) && err.response?.status === 400) {
+        setError(err.response.data?.detail ?? "An account with this email already exists.");
+      } else if (axios.isAxiosError(err) && !err.response) {
+        setError("The server is unavailable. Start the backend and try again.");
+      } else {
+        setError("Registration failed. Please check your details and try again.");
+      }
     } finally {
       setSubmitting(false);
     }
