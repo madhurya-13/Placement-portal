@@ -1,6 +1,7 @@
 # ---------- Core Framework ----------
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
+gunicorn==23.0.0  # production server on Render (uvicorn worker class)
 
 # ---------- Database ----------
 sqlalchemy==2.0.35

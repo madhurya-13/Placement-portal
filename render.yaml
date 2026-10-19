@@ -1,0 +1,31 @@
+# Render Blueprint — provisions the FastAPI backend as a web service.
+# Trigger: Render → New → Blueprint → this repo (must be on the default branch).
+# The database lives on Neon (not Render), so DATABASE_URL is supplied as an
+# environment variable rather than provisioned here.
+services:
+  - type: web
+    name: placement-portal-api
+    runtime: python
+    region: singapore          # closest to India; change to oregon if preferred
+    rootDir: backend           # Render installs backend/requirements.txt from here
+    # Migrations run on every deploy (idempotent — safe to re-run).
+    buildCommand: alembic upgrade head
+    # Bind 0.0.0.0 on Render's $PORT; 2 gunicorn workers fit the free 512MB,
+    # and the raised timeout stops cold-start DB queries from being killed.
+    startCommand: gunicorn -k uvicorn.workers.UvicornWorker -w 2 --timeout 120 -b 0.0.0.0:$PORT app.main:app
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false            # paste the Neon pooled connection string in the dashboard
+      - key: SECRET_KEY
+        generateValue: true    # auto-generated strong JWT signing key
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_ORIGIN
+        value: https://YOUR-VERCEL-APP.vercel.app   # <- replace after the Vercel deploy
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false            # from your Cloudinary dashboard
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
