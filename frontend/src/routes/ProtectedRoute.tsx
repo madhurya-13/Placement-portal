@@ -12,9 +12,11 @@ export function ProtectedRoute({
 }) {
   const { user, loading } = useAuth();
   if (loading) return <div className="p-8 text-center">Loading...</div>;
-  if (!user) return <Navigate to="/login" replace />;
+  // Missing credentials -> 401 page (which links to the login form);
+  // authenticated but wrong role -> 403 page.
+  if (!user) return <Navigate to="/401" replace />;
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/403" replace />;
   }
   return <>{children}</>;
 }

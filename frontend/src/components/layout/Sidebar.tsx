@@ -3,7 +3,7 @@
 // Mobile: slides in as an overlay drawer, controlled by isOpen/onClose.
 
 import { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { X, LogOut, type LucideIcon } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
 
@@ -21,6 +21,7 @@ interface SidebarProps {
 
 export default function Sidebar({ links, isOpen, onClose }: SidebarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { logoutUser } = useAuth();
 
   // Scroll to the section named in the URL hash — covers navigations that
@@ -40,12 +41,18 @@ export default function Sidebar({ links, isOpen, onClose }: SidebarProps) {
 
   function handleNavClick(e: React.MouseEvent<HTMLAnchorElement>, to: string) {
     const [path, hash] = to.split("#");
-    // Same route: scroll in place instead of letting the router re-render
-    // without moving the viewport.
+    // Same route: move through the router (NOT window.history.replaceState,
+    // which bypasses React Router — useLocation would never see the new hash
+    // and the active highlight would stay stuck on the first section).
     if (hash && path === location.pathname) {
       e.preventDefault();
-      document.getElementById(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.replaceState(null, "", to);
+      if (location.hash === `#${hash}`) {
+        // Already on this section: just re-scroll to its top.
+        document.getElementById(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        // Hash change -> the location effect below scrolls the section into view.
+        navigate(to, { replace: true });
+      }
     }
     onClose();
   }
