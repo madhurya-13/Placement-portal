@@ -6,6 +6,7 @@ services:
   - type: web
     name: placement-portal-api
     runtime: python
+    plan: free                 # free tier (spins down after ~15 min idle)
     region: singapore          # closest to India; change to oregon if preferred
     rootDir: backend           # Render installs backend/requirements.txt from here
     # Migrations run on every deploy (idempotent — safe to re-run).
